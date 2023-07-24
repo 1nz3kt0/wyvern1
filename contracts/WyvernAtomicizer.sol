@@ -1,33 +1,33 @@
 /*
 
-  << Wyvern Atomicizer >>
+  << Project Wyvern Atomicizer >>
 
   Execute multiple transactions, in order, atomically (if any fails, all revert).
+  This contract MUST be DELEGATECALLed.
 
 */
 
-pragma solidity 0.7.5;
+pragma solidity 0.4.23;
 
 /**
  * @title WyvernAtomicizer
- * @author Wyvern Protocol Developers
+ * @author Project Wyvern Developers
  */
 library WyvernAtomicizer {
 
-    function atomicize (address[] calldata addrs, uint[] calldata values, uint[] calldata calldataLengths, bytes calldata calldatas)
-        external
+    function atomicize (address[] addrs, uint[] values, uint[] calldataLengths, bytes calldatas)
+        public
     {
-        require(addrs.length == values.length && addrs.length == calldataLengths.length, "Addresses, calldata lengths, and values must match in quantity");
+        require(addrs.length == values.length && addrs.length == calldataLengths.length);
 
         uint j = 0;
         for (uint i = 0; i < addrs.length; i++) {
-            bytes memory cd = new bytes(calldataLengths[i]);
+            bytes memory calldata = new bytes(calldataLengths[i]);
             for (uint k = 0; k < calldataLengths[i]; k++) {
-                cd[k] = calldatas[j];
+                calldata[k] = calldatas[j];
                 j++;
             }
-            (bool success,) = addrs[i].call{value: values[i]}(cd);
-            require(success, "Atomicizer subcall failed");
+            require(addrs[i].call.value(values[i])(calldata));
         }
     }
 

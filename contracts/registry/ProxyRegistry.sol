@@ -6,24 +6,19 @@
 
 */
 
-pragma solidity 0.7.5;
+pragma solidity 0.4.23;
 
-import "openzeppelin-solidity/contracts/access/Ownable.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 import "./OwnableDelegateProxy.sol";
-import "./ProxyRegistryInterface.sol";
 
-/**
- * @title ProxyRegistry
- * @author Wyvern Protocol Developers
- */
-contract ProxyRegistry is Ownable, ProxyRegistryInterface {
+contract ProxyRegistry is Ownable {
 
     /* DelegateProxy implementation contract. Must be initialized. */
-    address public override delegateProxyImplementation;
+    address public delegateProxyImplementation;
 
     /* Authenticated proxies by user. */
-    mapping(address => OwnableDelegateProxy) public override proxies;
+    mapping(address => OwnableDelegateProxy) public proxies;
 
     /* Contracts pending access. */
     mapping(address => uint) public pending;
@@ -48,12 +43,12 @@ contract ProxyRegistry is Ownable, ProxyRegistryInterface {
         public
         onlyOwner
     {
-        require(!contracts[addr] && pending[addr] == 0, "Contract is already allowed in registry, or pending");
-        pending[addr] = block.timestamp;
+        require(!contracts[addr] && pending[addr] == 0);
+        pending[addr] = now;
     }
 
     /**
-     * End the process to enable access for specified contract after delay period has passed.
+     * End the process to nable access for specified contract after delay period has passed.
      *
      * @dev ProxyRegistry owner only
      * @param addr Address to which to grant permissions
@@ -62,7 +57,7 @@ contract ProxyRegistry is Ownable, ProxyRegistryInterface {
         public
         onlyOwner
     {
-        require(!contracts[addr] && pending[addr] != 0 && ((pending[addr] + DELAY_PERIOD) < block.timestamp), "Contract is no longer pending or has already been approved by registry");
+        require(!contracts[addr] && pending[addr] != 0 && ((pending[addr] + DELAY_PERIOD) < now));
         pending[addr] = 0;
         contracts[addr] = true;
     }
@@ -84,61 +79,16 @@ contract ProxyRegistry is Ownable, ProxyRegistryInterface {
      * Register a proxy contract with this registry
      *
      * @dev Must be called by the user which the proxy is for, creates a new AuthenticatedProxy
-     * @return proxy New AuthenticatedProxy contract
+     * @return New AuthenticatedProxy contract
      */
     function registerProxy()
         public
         returns (OwnableDelegateProxy proxy)
     {
-        return registerProxyFor(msg.sender);
-    }
-
-    /**
-     * Register a proxy contract with this registry, overriding any existing proxy
-     *
-     * @dev Must be called by the user which the proxy is for, creates a new AuthenticatedProxy
-     * @return proxy New AuthenticatedProxy contract
-     */
-    function registerProxyOverride()
-        public
-        returns (OwnableDelegateProxy proxy)
-    {
+        require(proxies[msg.sender] == address(0));
         proxy = new OwnableDelegateProxy(msg.sender, delegateProxyImplementation, abi.encodeWithSignature("initialize(address,address)", msg.sender, address(this)));
         proxies[msg.sender] = proxy;
         return proxy;
-    }
-
-    /**
-     * Register a proxy contract with this registry
-     *
-     * @dev Can be called by any user
-     * @return proxy New AuthenticatedProxy contract
-     */
-    function registerProxyFor(address user)
-        public
-        returns (OwnableDelegateProxy proxy)
-    {
-        require(proxies[user] == OwnableDelegateProxy(0), "User already has a proxy");
-        proxy = new OwnableDelegateProxy(user, delegateProxyImplementation, abi.encodeWithSignature("initialize(address,address)", user, address(this)));
-        proxies[user] = proxy;
-        return proxy;
-    }
-
-    /**
-     * Transfer access
-     */
-    function transferAccessTo(address from, address to)
-        public
-    {
-        OwnableDelegateProxy proxy = proxies[from];
-
-        /* CHECKS */
-        require(OwnableDelegateProxy(msg.sender) == proxy, "Proxy transfer can only be called by the proxy");
-        require(proxies[to] == OwnableDelegateProxy(0), "Proxy transfer has existing proxy as destination");
-
-        /* EFFECTS */
-        delete proxies[from];
-        proxies[to] = proxy;
     }
 
 }

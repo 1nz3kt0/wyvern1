@@ -1,44 +1,63 @@
 {
-  "name": "wyvern-v3",
-  "version": "3.1.0",
-  "description": "Wyvern Protocol v3.1, Ethereum implementation",
+  "name": "wyvern-ethereum",
+  "version": "1.0.0",
+  "description": "Wyvern Ethereum Contracts",
   "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@digix/doxity": "0.5.2",
+    "bitcoinjs-lib": "https://github.com/ProjectWyvern/bitcoinjs-lib.git",
+    "bs58check": "^2.1.0",
+    "coveralls": "^3.0.1",
+    "ethereumjs-abi": "^0.6.5",
+    "ethereumjs-testrpc": "^6.0.3",
+    "ethereumjs-util": "^5.1.2",
+    "openzeppelin-solidity": "git+https://github.com/OpenZeppelin/openzeppelin-solidity.git",
+    "solc": "^0.4.23",
+    "solidity-coverage": "^0.5.0",
+    "solidity-static-analysis": "^1.1.0",
+    "solium": "^1.1.7",
+    "standard": "^10.0.3",
+    "truffle": "^4.1.3",
+    "truffle-compile": "^3.0.10",
+    "vorpal": "^1.12.0",
+    "web3": "1.0.0-beta.18"
+  },
+  "devDependencies": {
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1"
+  },
   "scripts": {
-    "analyze": "scripts/analyze.sh",
-    "flatten": "scripts/flatten.sh",
-    "compile": "scripts/compile.sh",
-    "coverage": "scripts/coverage.sh",
     "test": "scripts/test.sh",
+    "develop": "scripts/develop.sh",
+    "compile": "scripts/compile.sh",
+    "testrpc": "scripts/testrpc.sh",
     "lint": "scripts/lint.sh",
-    "testrpc": "scripts/testrpc.sh"
+    "analyze": "scripts/analyze.sh",
+    "coverage": "scripts/coverage.sh",
+    "flatten": "scripts/flatten.sh",
+    "doc": "scripts/doc.sh"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/wyvernprotocol/wyvern-v3.git"
+    "url": "git+https://github.com/ProjectWyvern/wyvern-ethereum.git"
   },
-  "author": "Wyvern Protocol Developers",
+  "keywords": [
+    "wyvern",
+    "exchange",
+    "ethereum",
+    "cryptocurrency",
+    "token"
+  ],
+  "author": "Project Wyvern Developers",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wyvernprotocol/wyvern-v3/issues"
+    "url": "https://github.com/ProjectWyvern/wyvern-ethereum/issues"
   },
-  "homepage": "https://github.com/wyvernprotocol/wyvern-v3#readme",
-  "devDependencies": {
-    "@babel/runtime": "^7.12.5",
-    "coveralls": "^3.1.0",
-    "ethereumjs-testrpc-sc": "^6.5.1-sc.1",
-    "ganache-cli": "^6.12.1",
-    "ganache-core": "^2.13.1",
-    "lodash": "^4.17.20",
-    "openzeppelin-solidity": "^3.3.0",
-    "solidity-coverage": "^0.7.12",
-    "solium": "^1.2.5",
-    "standard": "^16.0.3",
-    "truffle": "^5.1.55",
-    "truffle-flattener": "^1.5.0",
-    "truffle-hdwallet-provider": "^1.0.17",
-    "dotenv": "^8.2.0",
-    "truffle-hdwallet-provider-klaytn": "^1.0.13-a",
-    "web3": "^1.3.0"
-  },
-  "dependencies": {}
+  "homepage": "https://github.com/ProjectWyvern/wyvern-ethereum#readme"
 }
